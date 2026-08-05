@@ -1,0 +1,17 @@
+{
+  "name": "backend_1",
+  "version": "1.0.0",
+  "description": "backend series",
+  "keywords": [
+    "javascript",
+    "backend",
+    "chai"
+  ],
+  "license": "ISC",
+  "author": "basavaraj chougala",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
