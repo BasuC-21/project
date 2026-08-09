@@ -1,5 +1,5 @@
-import {v2 as cloudinary} from "cloudinary"
-import fs from "fs"
+import {v2 as cloudinary} from "cloudinary";
+import fs from "fs";
 import { url } from "inspector";
 
 
@@ -13,17 +13,18 @@ import { url } from "inspector";
 
 
 
- const uploadOnCloudinary = async() =>(localFiltPath)=>{
+ const uploadOnCloudinary = async(localFilePath)=>{
     try{
         if(!localFilePath) return null
-        const response=await cloudinary.uploader.upload(localFiltPath,{
+        const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type:"auto"
-        })
-        console.log("file is uploaded on cloudinary",response,url);
+        });
+        //console.log("file is uploaded on cloudinary",response.url);
+        fs.unlinkSync(localFilePath)
         return response;
     }
     catch(error){
-        fs.unlinkSync(localFiltPath)
+        fs.unlinkSync(localFilePath)
         return null;
 
 
