@@ -1,18 +1,8 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { execFile } from "child_process";
-import { promisify } from "util";
-
-const execFileAsync = promisify(execFile);
-
-const FFMPEG_PATH =
-    process.env.FFMPEG_PATH ||
-    "C:\\Users\\basav\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg.Shared_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.1-full_build-shared\\bin\\ffmpeg.exe";
-
-const WHISPER_MODEL_PATH =
-    process.env.WHISPER_MODEL_PATH ||
-    "D:\\Backend_1\\ggml-base.en.bin";
+import ffmpegPath from "ffmpeg-static";
+import nodewhisper from "nodejs-whisper";
 
 const transcribeVideo = async (videoUrl) => {
     const tempDirectory = await fs.promises.mkdtemp(
@@ -24,17 +14,19 @@ const transcribeVideo = async (videoUrl) => {
         "video.mp4"
     );
 
-    const transcriptPath = path.join(
-        tempDirectory,
-        "transcript.txt"
-    );
-
-    const modelPath = path.join(
-        tempDirectory,
-        "ggml-base.en.bin"
+    const modelDirectory = path.join(
+        os.tmpdir(),
+        "edutube-whisper-models"
     );
 
     try {
+        await fs.promises.mkdir(
+            modelDirectory,
+            {
+                recursive: true
+            }
+        );
+
         const response = await fetch(videoUrl);
 
         if (!response.ok) {
@@ -52,35 +44,39 @@ const transcribeVideo = async (videoUrl) => {
             videoBuffer
         );
 
-        await fs.promises.copyFile(
-            WHISPER_MODEL_PATH,
-            modelPath
+        console.log(
+            "Starting Whisper transcription..."
         );
 
-        await execFileAsync(
-            FFMPEG_PATH,
-            [
-                "-y",
-                "-i",
-                videoPath,
-                "-af",
-                "whisper=model=ggml-base.en.bin:language=en:destination=transcript.txt:format=text",
-                "-f",
-                "null",
-                "NUL"
-            ],
+        const result = await nodewhisper(
+            videoPath,
             {
-                cwd: tempDirectory,
-                windowsHide: true,
-                maxBuffer: 10 * 1024 * 1024
+                modelName: "base.en",
+                modelRootPath: modelDirectory,
+                autoDownloadModelName: "base.en",
+
+                withCuda: false,
+
+                whisperOptions: {
+                    outputInText: true,
+                    outputInSrt: false,
+                    outputInVtt: false,
+                    outputInCsv: false,
+                    outputInJson: false,
+                    outputInJsonFull: false,
+                    outputInLrc: false,
+                    outputInWords: false,
+                    wordTimestamps: false,
+                    translateToEnglish: false,
+                    noGpu: true
+                }
             }
         );
 
         const transcript =
-            await fs.promises.readFile(
-                transcriptPath,
-                "utf8"
-            );
+            typeof result === "string"
+                ? result
+                : result?.toString?.() || "";
 
         const cleanedTranscript =
             transcript
@@ -94,6 +90,10 @@ const transcribeVideo = async (videoUrl) => {
                 "No speech could be detected in the video."
             );
         }
+
+        console.log(
+            "Whisper transcription completed."
+        );
 
         return cleanedTranscript;
     } finally {
