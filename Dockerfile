@@ -18,7 +18,7 @@ COPY package*.json ./
 RUN npm install
 
 RUN cd node_modules/nodejs-whisper/cpp/whisper.cpp && \
-    cmake -B build && \
+    cmake -B build -DGGML_NATIVE=OFF && \
     cmake --build build -j --config Release
 
 COPY . .
