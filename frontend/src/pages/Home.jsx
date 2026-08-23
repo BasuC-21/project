@@ -35,7 +35,7 @@ const [avatarFile, setAvatarFile] = useState(null);
     const fetchVideos = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/v1/videos"
+          "https://edutube-backend-3we7.onrender.com/api/v1/videos"
         );
 
         const data = await response.json();
@@ -60,7 +60,7 @@ const [avatarFile, setAvatarFile] = useState(null);
   const fetchCurrentUser = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/current-user",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/current-user",
         {
           method: "GET",
           credentials: "include",
@@ -185,7 +185,7 @@ const [avatarFile, setAvatarFile] = useState(null);
   const handleLogout = async () => {
   try {
     await fetch(
-      "http://localhost:8000/api/v1/users/logout",
+      "https://edutube-backend-3we7.onrender.com/api/v1/users/logout",
       {
         method: "POST",
         credentials: "include",
@@ -517,7 +517,7 @@ const [avatarFile, setAvatarFile] = useState(null);
         avatarData.append("avatar", avatarFile);
 
         const avatarResponse = await fetch(
-          "http://localhost:8000/api/v1/users/avatar",
+          "https://edutube-backend-3we7.onrender.com/api/v1/users/avatar",
           {
             method: "PATCH",
             credentials: "include",
@@ -545,7 +545,7 @@ const [avatarFile, setAvatarFile] = useState(null);
       }
 
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/update-account",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/update-account",
         {
           method: "PATCH",
           credentials: "include",

@@ -19,7 +19,7 @@ function Profile() {
   const fetchProfile = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/current-user",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/current-user",
         {
           method: "GET",
           credentials: "include",
@@ -65,7 +65,7 @@ function Profile() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/update-account",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/update-account",
         {
           method: "PATCH",
           credentials: "include",

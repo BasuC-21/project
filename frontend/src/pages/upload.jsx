@@ -107,7 +107,7 @@ function Upload() {
 
       // Send upload request
       const response = await fetch(
-        "http://localhost:8000/api/v1/videos",
+        "https://edutube-backend-3we7.onrender.com/api/v1/videos",
         {
           method: "POST",
           headers: {

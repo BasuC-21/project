@@ -94,7 +94,7 @@ function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/login",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/login",
         {
           method: "POST",
           headers: {
@@ -239,7 +239,7 @@ function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/send-password-reset-otp",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/send-password-reset-otp",
         {
           method: "POST",
           headers: {
@@ -308,7 +308,7 @@ function Login() {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/api/v1/users/verify-password-reset-otp",
+          "https://edutube-backend-3we7.onrender.com/api/v1/users/verify-password-reset-otp",
           {
             method: "POST",
             headers: {
@@ -386,7 +386,7 @@ function Login() {
 
       try {
         const response = await fetch(
-          "http://localhost:8000/api/v1/users/reset-password",
+          "https://edutube-backend-3we7.onrender.com/api/v1/users/reset-password",
           {
             method: "POST",
             headers: {

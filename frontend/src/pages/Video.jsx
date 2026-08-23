@@ -63,7 +63,7 @@ function Video() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/videos/${videoId}/generate-quiz`,
+        `https://edutube-backend-3we7.onrender.com/api/v1/videos/${videoId}/generate-quiz`,
         {
           method: "POST",
         }
@@ -153,7 +153,7 @@ function Video() {
         }
 
         const response = await fetch(
-          `http://localhost:8000/api/v1/videos/${videoId}`
+          `https://edutube-backend-3we7.onrender.com/api/v1/videos/${videoId}`
         );
 
         const data =
@@ -201,7 +201,7 @@ function Video() {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/likes/video/${videoId}/status`,
+          `https://edutube-backend-3we7.onrender.com/api/v1/likes/video/${videoId}/status`,
           {
             method: "GET",
             headers: {
@@ -243,7 +243,7 @@ function Video() {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/comments/video/${videoId}`
+          `https://edutube-backend-3we7.onrender.com/api/v1/comments/video/${videoId}`
         );
 
         const data =
@@ -333,7 +333,7 @@ function Video() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/likes/video/${videoId}`,
+        `https://edutube-backend-3we7.onrender.com/api/v1/likes/video/${videoId}`,
         {
           method: "POST",
           headers: {
@@ -501,7 +501,7 @@ function Video() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/comments/video/${videoId}`,
+        `https://edutube-backend-3we7.onrender.com/api/v1/comments/video/${videoId}`,
         {
           method: "POST",
           headers: {
