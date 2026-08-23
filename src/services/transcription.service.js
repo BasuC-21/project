@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
-import ffmpegPath from "ffmpeg-static";
-import nodewhisper from "nodejs-whisper";
+import { nodewhisper } from "nodejs-whisper";
 
 const transcribeVideo = async (videoUrl) => {
     const tempDirectory = await fs.promises.mkdtemp(
