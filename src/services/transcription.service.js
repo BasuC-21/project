@@ -87,6 +87,8 @@ const transcribeVideo = async (videoUrl) => {
       withCuda: false,
 
       whisperOptions: {
+        beamSize: 1,
+        bestOf: 1,
         outputInText: true,
         outputInSrt: false,
         outputInVtt: false,
