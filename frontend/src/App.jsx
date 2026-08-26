@@ -3,7 +3,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Video from "./pages/Video";
 import "./App.css";
-import Upload from "./pages/Upload";
+import Upload from "./pages/upload";
 import Profile from "./pages/Profile";
 
 function App() {
