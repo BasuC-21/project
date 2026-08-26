@@ -1,13 +1,17 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { nodewhisper } from "nodejs-whisper";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 const transcribeVideo = async (videoUrl) => {
     const totalStart = Date.now();
 
     const tempDirectory = await fs.promises.mkdtemp(
-        path.join(os.tmpdir(), "edutube-whisper-")
+        path.join(os.tmpdir(), "edutube-transcription-")
     );
 
     const videoPath = path.join(
@@ -15,20 +19,8 @@ const transcribeVideo = async (videoUrl) => {
         "video.mp4"
     );
 
-    const modelDirectory = path.join(
-        os.tmpdir(),
-        "edutube-whisper-models"
-    );
-
     try {
-        await fs.promises.mkdir(
-            modelDirectory,
-            {
-                recursive: true
-            }
-        );
-
-        console.log("[Whisper] Starting video download...");
+        console.log("[Transcription] Downloading video...");
 
         const downloadStart = Date.now();
 
@@ -50,58 +42,37 @@ const transcribeVideo = async (videoUrl) => {
         );
 
         console.log(
-            `[Whisper] Video download completed in ${
+            `[Transcription] Video downloaded in ${
                 ((Date.now() - downloadStart) / 1000).toFixed(2)
             }s`
         );
 
         console.log(
-            `[Whisper] Video size: ${
+            `[Transcription] Video size: ${
                 (videoBuffer.length / 1024 / 1024).toFixed(2)
             } MB`
         );
 
         console.log(
-            "[Whisper] Starting Whisper transcription..."
+            "[Transcription] Starting OpenAI transcription..."
         );
 
-        const whisperStart = Date.now();
+        const transcriptionStart = Date.now();
 
-        const result = await nodewhisper(
-            videoPath,
-            {
-                modelName: "tiny.en",
-                modelRootPath: modelDirectory,
-                autoDownloadModelName: "tiny.en",
-
-                withCuda: false,
-
-                whisperOptions: {
-                    outputInText: true,
-                    outputInSrt: false,
-                    outputInVtt: false,
-                    outputInCsv: false,
-                    outputInJson: false,
-                    outputInJsonFull: false,
-                    outputInLrc: false,
-                    outputInWords: false,
-                    wordTimestamps: false,
-                    translateToEnglish: false,
-                    noGpu: true
-                }
-            }
-        );
+        const transcription =
+            await openai.audio.transcriptions.create({
+                file: fs.createReadStream(videoPath),
+                model: "gpt-4o-mini-transcribe"
+            });
 
         console.log(
-            `[Whisper] Whisper completed in ${
-                ((Date.now() - whisperStart) / 1000).toFixed(2)
+            `[Transcription] OpenAI transcription completed in ${
+                ((Date.now() - transcriptionStart) / 1000).toFixed(2)
             }s`
         );
 
         const transcript =
-            typeof result === "string"
-                ? result
-                : result?.toString?.() || "";
+            transcription?.text || "";
 
         const cleanedTranscript =
             transcript
@@ -111,7 +82,7 @@ const transcribeVideo = async (videoUrl) => {
                 .trim();
 
         console.log(
-            `[Whisper] Transcript length: ${cleanedTranscript.length} characters`
+            `[Transcription] Transcript length: ${cleanedTranscript.length} characters`
         );
 
         if (!cleanedTranscript) {
@@ -121,7 +92,7 @@ const transcribeVideo = async (videoUrl) => {
         }
 
         console.log(
-            `[Whisper] Total transcription time: ${
+            `[Transcription] Total time: ${
                 ((Date.now() - totalStart) / 1000).toFixed(2)
             }s`
         );
