@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import "./Upload.css";
+import "./upload.css";
 
 function Upload() {
   const [formData, setFormData] = useState({
