@@ -1,18 +1,12 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD,
-    },
-});
+const resend = new Resend(
+    process.env.RESEND_API_KEY
+);
 
 const sendOtpEmail = async (email, otp) => {
-    await transporter.sendMail({
-        from: `"EduTube" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+        from: "EduTube <onboarding@resend.dev>",
         to: email,
         subject: "EduTube Email Verification OTP",
         text: `Your EduTube verification code is ${otp}. This code expires in 10 minutes.`,
