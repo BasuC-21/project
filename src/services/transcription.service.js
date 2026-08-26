@@ -4,6 +4,8 @@ import os from "os";
 import { nodewhisper } from "nodejs-whisper";
 
 const transcribeVideo = async (videoUrl) => {
+    const totalStart = Date.now();
+
     const tempDirectory = await fs.promises.mkdtemp(
         path.join(os.tmpdir(), "edutube-whisper-")
     );
@@ -26,6 +28,10 @@ const transcribeVideo = async (videoUrl) => {
             }
         );
 
+        console.log("[Whisper] Starting video download...");
+
+        const downloadStart = Date.now();
+
         const response = await fetch(videoUrl);
 
         if (!response.ok) {
@@ -44,8 +50,22 @@ const transcribeVideo = async (videoUrl) => {
         );
 
         console.log(
-            "Starting Whisper transcription..."
+            `[Whisper] Video download completed in ${
+                ((Date.now() - downloadStart) / 1000).toFixed(2)
+            }s`
         );
+
+        console.log(
+            `[Whisper] Video size: ${
+                (videoBuffer.length / 1024 / 1024).toFixed(2)
+            } MB`
+        );
+
+        console.log(
+            "[Whisper] Starting Whisper transcription..."
+        );
+
+        const whisperStart = Date.now();
 
         const result = await nodewhisper(
             videoPath,
@@ -72,6 +92,12 @@ const transcribeVideo = async (videoUrl) => {
             }
         );
 
+        console.log(
+            `[Whisper] Whisper completed in ${
+                ((Date.now() - whisperStart) / 1000).toFixed(2)
+            }s`
+        );
+
         const transcript =
             typeof result === "string"
                 ? result
@@ -84,6 +110,10 @@ const transcribeVideo = async (videoUrl) => {
                 .replace(/\s+/g, " ")
                 .trim();
 
+        console.log(
+            `[Whisper] Transcript length: ${cleanedTranscript.length} characters`
+        );
+
         if (!cleanedTranscript) {
             throw new Error(
                 "No speech could be detected in the video."
@@ -91,7 +121,9 @@ const transcribeVideo = async (videoUrl) => {
         }
 
         console.log(
-            "Whisper transcription completed."
+            `[Whisper] Total transcription time: ${
+                ((Date.now() - totalStart) / 1000).toFixed(2)
+            }s`
         );
 
         return cleanedTranscript;
