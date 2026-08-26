@@ -70,9 +70,9 @@ const transcribeVideo = async (videoUrl) => {
         const result = await nodewhisper(
             videoPath,
             {
-                modelName: "base.en",
+                modelName: "tiny.en",
                 modelRootPath: modelDirectory,
-                autoDownloadModelName: "base.en",
+                autoDownloadModelName: "tiny.en",
 
                 withCuda: false,
 
