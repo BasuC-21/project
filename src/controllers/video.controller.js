@@ -173,10 +173,12 @@ const generateQuizForVideo = asyncHandler(async (req, res) => {
     }
 
     
+let transcript = video.transcript;
 
-    console.log("Starting video transcription...");
+if (!transcript?.trim()) {
+    console.log("No saved transcript. Starting video transcription...");
 
-    const transcript = await transcribeVideo(
+    transcript = await transcribeVideo(
         video.videoFile
     );
 
@@ -186,6 +188,16 @@ const generateQuizForVideo = asyncHandler(async (req, res) => {
             "Video transcription failed"
         );
     }
+
+    video.transcript = transcript;
+    video.quizGeneratedFromTranscript = false;
+
+    await video.save();
+
+    console.log("Transcript saved to database.");
+} else {
+    console.log("Using existing transcript. Skipping Whisper.");
+}
 
     console.log(
         "Transcript generated:",
