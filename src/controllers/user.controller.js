@@ -136,16 +136,21 @@ const sendRegistrationOtp = asyncHandler(
         |--------------------------------------------------------------------------
         */
 
-        await sendOtpEmail(
-            normalizedEmail,
-            otp
-        );
+        if (process.env.DEMO_MODE === "true") {
+    console.log(
+        `DEMO MODE - Registration OTP for ${normalizedEmail}: ${otp}`
+    );
+} else {
+    await sendOtpEmail(
+        normalizedEmail,
+        otp
+    );
 
-
-        console.log(
-            "OTP sent successfully to:",
-            normalizedEmail
-        );
+    console.log(
+        "OTP sent successfully to:",
+        normalizedEmail
+    );
+}
 
 
         return res.status(200).json(
