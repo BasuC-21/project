@@ -451,13 +451,18 @@ function Register() {
       }
 
       showPopup(
-  "Profile created successfully!",
+  "Profile created successfully! Redirecting to login...",
   "success"
 );
 
 setMessage(
-  "Profile created successfully!"
+  "Profile created successfully! Redirecting to login..."
 );
+
+setTimeout(() => {
+  window.location.replace("/login");
+}, 1500);
+
       setFormData({
         fullName: "",
         email: "",
