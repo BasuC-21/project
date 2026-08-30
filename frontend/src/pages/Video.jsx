@@ -367,7 +367,32 @@ setSubscribed(isSubscribed);
 }, [
   video?.owner?._id
 ]);
+useEffect(() => {
+  if (!videoId || !currentUser?._id) {
+    setSaved(false);
+    return;
+  }
 
+  try {
+    const savedVideos = JSON.parse(
+      localStorage.getItem(
+        `edutube_saved_videos_${currentUser._id}`
+      ) || "[]"
+    );
+
+    setSaved(
+      Array.isArray(savedVideos) &&
+      savedVideos.includes(videoId)
+    );
+  } catch (err) {
+    console.error(
+      "Failed to load saved video status:",
+      err
+    );
+
+    setSaved(false);
+  }
+}, [videoId, currentUser?._id]);
   const handleLike = async () => {
     const token =
       localStorage.getItem(
