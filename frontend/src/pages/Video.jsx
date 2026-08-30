@@ -304,48 +304,69 @@ function Video() {
     fetchComments();
   }, [videoId]);
 
-  useEffect(() => {
-    if (!videoId) {
+ useEffect(() => {
+  const loadSubscriptionStatus = async () => {
+    console.log("LOAD SUBSCRIPTION STATUS RUNNING");
+    
+    const creatorId = video?.owner?._id;
+    const token = localStorage.getItem("accessToken");
+
+    if (!creatorId || !token) {
+      setSubscribed(false);
       return;
     }
 
     try {
-      const savedVideos =
-        JSON.parse(
-          localStorage.getItem(
-            `edutube_saved_videos_${currentUser?._id}`
-          ) || "[]"
-        );
-
-      const subscribedCreators =
-  JSON.parse(
-    localStorage.getItem(
-      `edutube_subscribed_creators_${currentUser?._id}`
-    ) || "[]"
-  );
-
-      setSaved(
-        Array.isArray(savedVideos) &&
-          savedVideos.includes(videoId)
+      const response = await fetch(
+        "https://edutube-backend-3we7.onrender.com/api/v1/subscriptions/u",
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      if (video?.owner?._id) {
-        setSubscribed(
-          Array.isArray(
-            subscribedCreators
-          ) &&
-            subscribedCreators.includes(
-              video.owner._id
-            )
+      const data = await response.json();
+      console.log("SUBSCRIPTION DATA:", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load subscription status"
         );
       }
+
+     const subscriptions = Array.isArray(data.data)
+  ? data.data
+  : [];
+
+const isSubscribed = subscriptions.some(
+  (subscription) => {
+    const channelId =
+      subscription?.channel?._id ||
+      subscription?.channel;
+
+    return String(channelId) === String(creatorId);
+  }
+);
+
+setSubscribed(isSubscribed);
     } catch (err) {
-      console.error(err);
+      console.error(
+        "Failed to load subscription status:",
+        err
+      );
+
+      setSubscribed(false);
     }
-  }, [
-    videoId,
-    video?.owner?._id,
-  ]);
+  };
+
+  loadSubscriptionStatus();
+}, [
+  video?.owner?._id
+]);
 
   const handleLike = async () => {
     const token =
@@ -403,7 +424,7 @@ function Video() {
   };
 
   const handleSave = () => {
-    if (!videoId) {
+    if (!videoId || !currentUser?._id) {
       return;
     }
 
@@ -452,60 +473,44 @@ function Video() {
     }
   };
 
-  const handleSubscribe = () => {
-    const creatorId =
-      video?.owner?._id;
+  const handleSubscribe = async () => {
+  const creatorId = video?.owner?._id;
+  const token = localStorage.getItem("accessToken");
 
-    if (!creatorId) {
-      return;
-    }
+  if (!creatorId || !token) {
+    return;
+  }
 
-    try {
-      const subscribedCreators =
-        JSON.parse(
-          localStorage.getItem(
-            `edutube_subscribed_creators_${currentUser?._id}`
-          ) || "[]"
-        );
-
-      const current =
-        Array.isArray(
-          subscribedCreators
-        )
-          ? subscribedCreators
-          : [];
-
-      if (
-        current.includes(creatorId)
-      ) {
-        const updated =
-          current.filter(
-            (id) => id !== creatorId
-          );
-
-        localStorage.setItem(
-          `edutube_subscribed_creators_${currentUser?._id}`,
-          JSON.stringify(updated)
-        );
-
-        setSubscribed(false);
-      } else {
-        const updated = [
-          ...current,
-          creatorId,
-        ];
-
-        localStorage.setItem(
-          `edutube_subscribed_creators_${currentUser?._id}`,
-          JSON.stringify(updated)
-        );
-
-        setSubscribed(true);
+  try {
+    const response = await fetch(
+      `https://edutube-backend-3we7.onrender.com/api/v1/subscriptions/c/${creatorId}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (err) {
-      console.error(err);
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to update subscription"
+      );
     }
-  };
+
+    setSubscribed(
+      Boolean(data.data?.subscribed)
+    );
+  } catch (err) {
+    console.error(
+      "Failed to update subscription:",
+      err
+    );
+  }
+};
 
   const handleAddComment = async (
     event
