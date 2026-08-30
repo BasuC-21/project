@@ -318,11 +318,11 @@ function Video() {
         );
 
       const subscribedCreators =
-        JSON.parse(
-          localStorage.getItem(
-            "edutube_subscribed_creators"
-          ) || "[]"
-        );
+  JSON.parse(
+    localStorage.getItem(
+      `edutube_subscribed_creators_${currentUser?._id}`
+    ) || "[]"
+  );
 
       setSaved(
         Array.isArray(savedVideos) &&
@@ -464,7 +464,7 @@ function Video() {
       const subscribedCreators =
         JSON.parse(
           localStorage.getItem(
-            "edutube_subscribed_creators"
+            `edutube_subscribed_creators_${currentUser?._id}`
           ) || "[]"
         );
 
@@ -484,7 +484,7 @@ function Video() {
           );
 
         localStorage.setItem(
-          "edutube_subscribed_creators",
+          `edutube_subscribed_creators_${currentUser?._id}`,
           JSON.stringify(updated)
         );
 
@@ -496,7 +496,7 @@ function Video() {
         ];
 
         localStorage.setItem(
-          "edutube_subscribed_creators",
+          `edutube_subscribed_creators_${currentUser?._id}`,
           JSON.stringify(updated)
         );
 
