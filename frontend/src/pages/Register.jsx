@@ -215,7 +215,7 @@ function Register() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/send-registration-otp",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/send-registration-otp",
         {
           method: "POST",
           headers: {
@@ -294,7 +294,7 @@ function Register() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/verify-registration-otp",
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/verify-registration-otp",
         {
           method: "POST",
           headers: {
