@@ -21,6 +21,7 @@ function Video() {
   const [likeLoading, setLikeLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
@@ -40,6 +41,37 @@ function Video() {
   const videoId = new URLSearchParams(
     window.location.search
   ).get("id");
+  useEffect(() => {
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await fetch(
+        "https://edutube-backend-3we7.onrender.com/api/v1/users/current-user",
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "accessToken"
+            )}`,
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setCurrentUser(result.data);
+      }
+    } catch (error) {
+      console.error(
+        "Could not fetch current user:",
+        error
+      );
+    }
+  };
+
+  fetchCurrentUser();
+}, []);
 
   const quizQuestions = Array.isArray(video?.quiz)
     ? video.quiz.map((question) => ({
@@ -281,7 +313,7 @@ function Video() {
       const savedVideos =
         JSON.parse(
           localStorage.getItem(
-            "edutube_saved_videos"
+            `edutube_saved_videos_${currentUser?._id}`
           ) || "[]"
         );
 
@@ -379,7 +411,7 @@ function Video() {
       const savedVideos =
         JSON.parse(
           localStorage.getItem(
-            "edutube_saved_videos"
+            `edutube_saved_videos_${currentUser?._id}`
           ) || "[]"
         );
 
@@ -397,7 +429,7 @@ function Video() {
           );
 
         localStorage.setItem(
-          "edutube_saved_videos",
+          `edutube_saved_videos_${currentUser?._id}`,
           JSON.stringify(updated)
         );
 
@@ -409,7 +441,7 @@ function Video() {
         ];
 
         localStorage.setItem(
-          "edutube_saved_videos",
+          `edutube_saved_videos_${currentUser?._id}`,
           JSON.stringify(updated)
         );
 

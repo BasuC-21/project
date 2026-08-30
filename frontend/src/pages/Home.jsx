@@ -117,32 +117,40 @@ const [avatarFile, setAvatarFile] = useState(null);
   const recommendedVideos = filteredVideos.slice(0, 6);
 
   const learningVideos = useMemo(() => {
-    try {
-      const viewedIds = JSON.parse(
-        localStorage.getItem("edutube_viewed_videos") || "[]"
-      );
+  try {
+    if (!currentUser?._id) return [];
 
-      return viewedIds
-        .map((id) => videos.find((video) => video._id === id))
-        .filter(Boolean);
-    } catch {
-      return [];
-    }
-  }, [videos]);
+    const storageKey = `edutube_viewed_videos_${currentUser._id}`;
+
+    const viewedIds = JSON.parse(
+      localStorage.getItem(storageKey) || "[]"
+    );
+
+    return viewedIds
+      .map((id) => videos.find((video) => video._id === id))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}, [videos, currentUser]);
 
   const collectionVideos = useMemo(() => {
-    try {
-      const savedIds = JSON.parse(
-        localStorage.getItem("edutube_saved_videos") || "[]"
-      );
+  try {
+    if (!currentUser?._id) return [];
 
-      return savedIds
-        .map((id) => videos.find((video) => video._id === id))
-        .filter(Boolean);
-    } catch {
-      return [];
-    }
-  }, [videos]);
+    const storageKey = `edutube_saved_videos_${currentUser._id}`;
+
+    const savedIds = JSON.parse(
+      localStorage.getItem(storageKey) || "[]"
+    );
+
+    return savedIds
+      .map((id) => videos.find((video) => video._id === id))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}, [videos, currentUser]);
 
   const totalViews = videos.reduce(
     (total, video) =>
@@ -151,9 +159,14 @@ const [avatarFile, setAvatarFile] = useState(null);
   );
 
   const openVideo = (videoId) => {
+    if (!currentUser?._id) {
+  return;
+}
     try {
       const viewedIds = JSON.parse(
-        localStorage.getItem("edutube_viewed_videos") || "[]"
+        localStorage.getItem(
+    `edutube_viewed_videos_${currentUser?._id}`
+  ) || "[]"
       );
 
       const updatedViewedIds = [
@@ -162,7 +175,7 @@ const [avatarFile, setAvatarFile] = useState(null);
       ].slice(0, 20);
 
       localStorage.setItem(
-        "edutube_viewed_videos",
+        `edutube_viewed_videos_${currentUser?._id}`,
         JSON.stringify(updatedViewedIds)
       );
     } catch (storageError) {
