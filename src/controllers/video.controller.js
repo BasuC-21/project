@@ -241,13 +241,21 @@ if (!transcript?.trim()) {
         }
     }
 
-    video.quiz = quiz;
+    await Video.findByIdAndUpdate(
+    videoId,
+    {
+        $set: {
+            quiz: quiz
+        }
+    },
+    {
+        returnDocument: "after"
+    }
+);
 
-    await video.save();
-
-    console.log(
-        "Quiz generated from transcript and saved."
-    );
+console.log(
+    "Quiz generated from transcript and saved."
+);
 
     return res.status(200).json(
         new ApiResponse(
