@@ -5,6 +5,7 @@ import { Subscription } from "../models/subscription.model.js";
 
 const toggleSubscription = asyncHandler(async (req, res) => {
     const { channelId } = req.params;
+    
 
     if (channelId === req.user._id.toString()) {
         throw new ApiError(400, "You cannot subscribe to yourself");
