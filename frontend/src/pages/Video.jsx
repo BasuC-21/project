@@ -501,6 +501,8 @@ useEffect(() => {
   const handleSubscribe = async () => {
   const creatorId = video?.owner?._id;
   const token = localStorage.getItem("accessToken");
+  console.log("VIDEO OWNER ID:", creatorId);
+console.log("CURRENT USER ID:", currentUser?._id);
 
   if (!creatorId || !token) {
     return;
@@ -959,23 +961,22 @@ const startQuiz = async () => {
                 ? "Saved"
                 : "Save"}
             </button>
+              {String(video?.owner?._id) !== String(currentUser?._id) && (
+          
+  <button
+    className={`video-action-button subscribe ${
+      subscribed ? "subscribed" : ""
+    }`}
+    onClick={handleSubscribe}
+  >
+    <UserPlus size={16} />
 
-            <button
-              className={`video-action-button subscribe ${
-                subscribed
-                  ? "subscribed"
-                  : ""
-              }`}
-              onClick={
-                handleSubscribe
-              }
-            >
-              <UserPlus size={16} />
+    {subscribed
+      ? "Subscribed"
+      : "Subscribe"}
+  </button>
+)}
 
-              {subscribed
-                ? "Subscribed"
-                : "Subscribe"}
-            </button>
           </div>
         </section>
 
